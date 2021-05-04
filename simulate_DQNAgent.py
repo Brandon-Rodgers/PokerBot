@@ -29,8 +29,15 @@ from dqn9 import DQN9
 if not os.path.isdir('models'):
     os.makedirs('models')
 
-MAX_ROUNDS = 1000
+MAX_ROUNDS = 100000
 INITIAL_STACK = 100
+
+gpu = False
+
+if gpu:
+	physical_devices = tf.config.experimental.list_physical_devices('GPU')
+	print(f"Num GPUs Available: {len(physical_devices)}")
+	tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 if __name__ == '__main__':
     # The stack log contains the stacks of the Data Blogger bot after each game (the initial stack is 100)

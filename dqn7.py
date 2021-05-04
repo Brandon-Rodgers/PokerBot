@@ -33,19 +33,16 @@ dict_opponent_obj_ids = {}
 first_reset = True
 global reset
 
-LOAD_MODEL = 'models/3x256_Bot2__792.50max___49.16avg_-111.00min_1620077865.model'
+LOAD_MODEL = 'models/3x256_Bot9__792.50max___16.15avg_-111.00min_1620131055.model'
 
 DISCOUNT = 0.99
-REPLAY_MEMORY_SIZE = 500_000  # How many last steps to keep for model training
-MIN_REPLAY_MEMORY_SIZE = 10_000  # Minimum number of steps in a memory to start training
-MINIBATCH_SIZE = 1_000  # How many steps (samples) to use for training
+REPLAY_MEMORY_SIZE = 50_000  # How many last steps to keep for model training
+MIN_REPLAY_MEMORY_SIZE = 1_000  # Minimum number of steps in a memory to start training
+MINIBATCH_SIZE = 100  # How many steps (samples) to use for training
 UPDATE_TARGET_EVERY = 5  # Terminal states (end of episodes)
 MODEL_NAME = '3x256_Bot7' # For model save
 MIN_REWARD = 100  
 MEMORY_FRACTION = 0.20
-
-# Environment settings
-EPISODES = 20_000
 
 # Exploration settings
 EPSILON_DECAY = 0.99975
@@ -537,7 +534,7 @@ class DQN7(BasePokerPlayer):
 			if min_reward >= MIN_REWARD:
 				self.agent.model.save(f'models/{MODEL_NAME}_{max_reward:_>7.2f}max_{average_reward:_>7.2f}avg_{min_reward:_>7.2f}min_{int(time.time())}.model')
 
-		if not round_num % 500 or round_num == 999:
+		if not round_num % 5000 or round_num == 999:
 			average_reward = sum(self.ep_rewards[-AGGREGATE_STATS_EVERY:])/len(self.ep_rewards[-AGGREGATE_STATS_EVERY:])
 			min_reward = min(self.ep_rewards[-AGGREGATE_STATS_EVERY:])
 			max_reward = max(self.ep_rewards[-AGGREGATE_STATS_EVERY:])
