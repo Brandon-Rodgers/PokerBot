@@ -33,7 +33,7 @@ dict_opponent_obj_ids = {}
 first_reset = True
 global reset
 
-LOAD_MODEL = 'models/3x256_Bot9__792.50max___16.15avg_-111.00min_1620131055.model'
+LOAD_MODEL = None
 
 DISCOUNT = 0.99
 REPLAY_MEMORY_SIZE = 50_000  # How many last steps to keep for model training
@@ -43,6 +43,9 @@ UPDATE_TARGET_EVERY = 5  # Terminal states (end of episodes)
 MODEL_NAME = '3x256_Bot5' # For model save
 MIN_REWARD = 100  
 MEMORY_FRACTION = 0.20
+
+AVG_REWARD = 50
+SAVE_EVERY = 25_000
 
 # Exploration settings
 EPSILON_DECAY = 0.99975
@@ -114,7 +117,7 @@ class DQNAgent:
 			model.add(Dense(256, activation='relu'))
 
 			model.add(Dense(53, activation="linear"))
-			model.compile(loss="mse", optimizer=Adam(lr=0.0001), metrics=['accuracy'])
+			model.compile(loss="mse", optimizer=Adam(learning_rate=0.003), metrics=['accuracy'])
 
 			'''
 			model = Sequential([

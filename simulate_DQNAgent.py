@@ -2,7 +2,7 @@ from pypokerengine.api.game import start_poker, setup_config
 from pypokerengine.engine.hand_evaluator import HandEvaluator
 from pypokerengine.players import BasePokerPlayer
 from pypokerengine.utils.card_utils import _pick_unused_card, _fill_community_card, gen_cards
-import numpy as np
+import numpy as npbackend
 import keras.backend as backend
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Conv2D, MaxPooling2D, Activation, Flatten
@@ -32,7 +32,7 @@ if not os.path.isdir('models'):
 MAX_ROUNDS = 100000
 INITIAL_STACK = 100
 
-gpu = False
+gpu = True
 
 if gpu:
 	physical_devices = tf.config.experimental.list_physical_devices('GPU')
@@ -48,14 +48,14 @@ if __name__ == '__main__':
     config = setup_config(max_round=MAX_ROUNDS, initial_stack=INITIAL_STACK, ante=ANTE, small_blind_amount=SMALL_BLIND_AMOUNT)
 
     config.register_player(name=f"dqn1", algorithm=DQN1())
-    config.register_player(name=f"dqn2", algorithm=DQN2())
-    config.register_player(name=f"dqn3", algorithm=DQN3())
-    config.register_player(name=f"dqn4", algorithm=DQN4())
-    config.register_player(name=f"dqn5", algorithm=DQN5())
-    config.register_player(name=f"dqn6", algorithm=DQN6())
-    config.register_player(name=f"dqn7", algorithm=DQN7())
-    config.register_player(name=f"dqn8", algorithm=DQN8())
-    config.register_player(name=f"dqn9", algorithm=DQN9())
+    config.register_player(name=f"dqn2", algorithm=DQN1())
+    config.register_player(name=f"dqn3", algorithm=DQN1())
+    config.register_player(name=f"dqn4", algorithm=DQN1())
+    config.register_player(name=f"dqn5", algorithm=DQN1())
+    config.register_player(name=f"dqn6", algorithm=DQN1())
+    config.register_player(name=f"dqn7", algorithm=DQN1())
+    config.register_player(name=f"dqn8", algorithm=DQN1())
+    config.register_player(name=f"dqn9", algorithm=DQN1())
 
     game_result = start_poker(config, verbose=0)
 

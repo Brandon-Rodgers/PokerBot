@@ -33,16 +33,19 @@ dict_opponent_obj_ids = {}
 first_reset = True
 global reset
 
-LOAD_MODEL = 'models/3x256_Bot9__792.50max___16.15avg_-111.00min_1620131055.model'
+LOAD_MODEL = None
 
 DISCOUNT = 0.99
 REPLAY_MEMORY_SIZE = 50_000  # How many last steps to keep for model training
 MIN_REPLAY_MEMORY_SIZE = 1_000  # Minimum number of steps in a memory to start training
-MINIBATCH_SIZE = 1_000  # How many steps (samples) to use for training
+MINIBATCH_SIZE = 100  # How many steps (samples) to use for training
 UPDATE_TARGET_EVERY = 5  # Terminal states (end of episodes)
-MODEL_NAME = '3x256_Bot1' # For model save
+MODEL_NAME = '3x256' # For model save
 MIN_REWARD = 100  
 MEMORY_FRACTION = 0.20
+
+AVG_REWARD = 120
+SAVE_EVERY = 25_000
 
 # Exploration settings
 EPSILON_DECAY = 0.99975
@@ -114,7 +117,7 @@ class DQNAgent:
 			model.add(Dense(256, activation='relu'))
 
 			model.add(Dense(53, activation="linear"))
-			model.compile(loss="mse", optimizer=Adam(lr=0.0001), metrics=['accuracy'])
+			model.compile(loss="mse", optimizer=Adam(learning_rate=0.01), metrics=['accuracy'])
 
 			'''
 			model = Sequential([
@@ -347,7 +350,7 @@ class DQN1(BasePokerPlayer):
 
 		self.agent.update_replay_memory((np.array(table_information), action, step_reward, [], False))
 
-		print(f"{self.uuid} {action} by {amount_name} for {amount}")
+		# print(f"{self.uuid} {action} by {amount_name} for {amount}")
 
 		return action, amount
 
@@ -531,14 +534,15 @@ class DQN1(BasePokerPlayer):
 			self.agent.tensorboard.update_stats(reward_avg=average_reward, reward_min=min_reward, reward_max=max_reward, epsilon=self.epsilon)
 
 			# Save model, but only when min reward is greater or equal a set value
-			if min_reward >= MIN_REWARD:
+			if average_reward >= AVG_REWARD:
 				self.agent.model.save(f'models/{MODEL_NAME}_{max_reward:_>7.2f}max_{average_reward:_>7.2f}avg_{min_reward:_>7.2f}min_{int(time.time())}.model')
 
-		if not round_num % 5000 or round_num == 999:
+		if not round_num % SAVE_EVERY or round_num == 999:
 			average_reward = sum(self.ep_rewards[-AGGREGATE_STATS_EVERY:])/len(self.ep_rewards[-AGGREGATE_STATS_EVERY:])
 			min_reward = min(self.ep_rewards[-AGGREGATE_STATS_EVERY:])
 			max_reward = max(self.ep_rewards[-AGGREGATE_STATS_EVERY:])
 			self.agent.model.save(f'models/{MODEL_NAME}_{max_reward:_>7.2f}max_{average_reward:_>7.2f}avg_{min_reward:_>7.2f}min_{int(time.time())}.model')
+			print(f"Models saved at round {round_num}.")
 
 		# Decay epsilon
 		if self.epsilon > MIN_EPSILON:
